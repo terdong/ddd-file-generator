@@ -1,6 +1,6 @@
 {
   "name": "ddd-file-generator",
-  "publisher": "Darren Kim",
+  "publisher": "DarrenKim",
   "displayName": "DDD File Generator",
   "description": "This extension creates files and folders according to typical DDD layer architecture.",
   "version": "1.0.0",
