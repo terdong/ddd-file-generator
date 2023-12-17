@@ -3,7 +3,7 @@
   "publisher": "Darren Kim",
   "displayName": "DDD File Generator",
   "description": "This extension creates files and folders according to typical DDD layer architecture.",
-  "version": "0.0.1",
+  "version": "1.0.0",
   "engines": {
     "vscode": "^1.85.0"
   },
