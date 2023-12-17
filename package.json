@@ -1,0 +1,55 @@
+{
+  "name": "ddd-file-generator",
+  "publisher": "Darren Kim",
+  "displayName": "DDD File Generator",
+  "description": "This extension creates files and folders according to typical DDD layer architecture.",
+  "version": "0.0.1",
+  "engines": {
+    "vscode": "^1.85.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "icon": "images/icon.png",
+  "activationEvents": [],
+  "main": "./out/extension.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/terdong/ddd-file-generator"
+  },
+  "contributes": {
+    "menus": {
+      "explorer/context": [
+        {
+          "command": "ddd-file-generator.createDomainStructure"
+        }
+      ]
+    },
+    "commands": [
+      {
+        "command": "ddd-file-generator.createDomainStructure",
+        "category": "DDD",
+        "title": "Create Domain Structure"
+      }
+    ]
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run compile",
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./",
+    "pretest": "npm run compile && npm run lint",
+    "lint": "eslint src --ext ts",
+    "test": "vscode-test"
+  },
+  "devDependencies": {
+    "@types/vscode": "^1.85.0",
+    "@types/mocha": "^10.0.6",
+    "@types/node": "18.x",
+    "@typescript-eslint/eslint-plugin": "^6.13.1",
+    "@typescript-eslint/parser": "^6.13.1",
+    "eslint": "^8.54.0",
+    "typescript": "^5.3.2",
+    "@vscode/test-cli": "^0.0.4",
+    "@vscode/test-electron": "^2.3.8"
+  }
+}
