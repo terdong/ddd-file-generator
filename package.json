@@ -21,7 +21,9 @@
     "menus": {
       "explorer/context": [
         {
-          "command": "ddd-file-generator.createDomainStructure"
+          "command": "ddd-file-generator.createDomainStructure",
+          "group": "2_workspace",
+          "when": "explorerResourceIsFolder"
         }
       ]
     },
