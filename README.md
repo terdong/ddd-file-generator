@@ -6,7 +6,7 @@ I developed it to reduce the effort of repeating files and directories on Scala 
 
 ## Features
 
-* Create a package folder with related directories and files for DDD
+* A total of 4 directories and 4 sample scala files will be created.
 ![Create Domain Structure00](images/ddd_file_generator_example_01.gif)
 ![Create Domain Structure01](images/ddd_file_generator_example_00.gif)
 
@@ -22,7 +22,7 @@ For example if there is an image subfolder under your extension project workspac
 
 | Command                                   | Title                   | Description                                                                                                                  |
 | ----------------------------------------- | ----------------------- | ---------------------------------------------------------------------------------------------------------------------------- |
-| ddd-file-generator.createDomainStructure | Create Domain Structure | A package for the entered domain name is created, and each of the four layer packages and sample files are created below it. |
+| ddd-file-generator.createDomainStructure | DDD:Create Domain Structure | A package for the entered domain name is created, and each of the four layer packages and sample files are created below it. |
 
 ## Supported Languages
 
@@ -46,7 +46,7 @@ This extension contributes the following settings:
 * Since it is created in the standard source code location of the Scala project(i.e. src/main/scala), if it is executed with a vscode command not like through the context menu, the result will be created under the path.
 * Other languages may be supported in the future.
 
-## Release Notes
+## Release Notes(without hotfix)
 
 ### 1.0.0
 
