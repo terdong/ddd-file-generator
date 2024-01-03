@@ -1,5 +1,7 @@
 // The module 'vscode' contains the VS Code extensibility API
 // Import the module and reference it with the alias vscode in your code below
+import fs from 'fs';
+import path from 'path';
 import * as vscode from 'vscode';
 import * as FileUtils from './file-utils';
 import { getCommonSnippet } from './snippets';
@@ -23,41 +25,59 @@ enum LayerFileSuffix {
 	infrastructure = "Repository"
 }
 
-const basicPath = 'src/main/scala/'
-
-const makeLayer = (rootDir: vscode.Uri, rootPackageName: string, domainName: string) => async (layer: Layer): Promise<vscode.Uri> => {
+const makeLayer = (rootDir: vscode.Uri, rootPackageName: string, domainName: string, shouldCreateFile: boolean) => async (layer: Layer, configedLayerName: string): Promise<vscode.Uri> => {
 	const layerIndex = layer.valueOf()
-	const layerName = Object.values(LayerNames)[layerIndex]
+	const layerName = configedLayerName.length > 0 ? configedLayerName : Object.values(LayerNames)[layerIndex]
 	const layerSuffix = Object.values(LayerFileSuffix)[layerIndex]
 	const layerDir = await FileUtils.createDirectory(rootDir, layerName)
-	const fileName = `${domainName}${layerSuffix}`
-	return await FileUtils.createFileWithContent(layerDir, `${fileName}.scala`, stringToUintArray(getCommonSnippet(`${rootPackageName}.${layerName}`, fileName)))
+	if (shouldCreateFile) {
+		const fileName = `${domainName}${layerSuffix}`
+		return await FileUtils.createFileWithContent(layerDir, `${fileName}.scala`, stringToUintArray(getCommonSnippet(`${rootPackageName}.${layerName}`, fileName)))
+	} else {
+		return layerDir
+	}
 }
 
-async function onCreateDomainStructure(uri: vscode.Uri) {
+const onCreateDDDStructure = (shouldCreateFile: boolean) => async (uri: vscode.Uri) => {
 	const domainName = await vscode.window.showInputBox({ title: "Domain Name", prompt: "As you enter a domain name, files and directories are created accrding to a simple DDD layer rule", placeHolder: "Enter a domain name" })
-	const selectedUri = uri ? uri : vscode.workspace.workspaceFolders?.[0].uri
-	if (domainName && selectedUri) {
-		let rootPath = selectedUri.path
-		let targetPath = ''
-		if (!rootPath.includes(basicPath)) {
-			targetPath = basicPath
-		}
+	const selectedUri = uri ? uri : vscode.window.activeTextEditor != null ? vscode.window.activeTextEditor.document.uri : vscode.workspace.workspaceFolders?.[0].uri
 
+	if (domainName && selectedUri) {
+		const isFile = fs.lstatSync(selectedUri.fsPath).isFile()
+		const targetUri = isFile ? vscode.Uri.parse(path.dirname(selectedUri.path)) : selectedUri
+
+		const config = vscode.workspace.getConfiguration('ddd-file-generator')
+		// This code is deprecated. Because of adding related command in config.
+		/* const shouldCreateFile = config.get<boolean>('createEachFilesOnLayers') ?? false
+		"ddd-file-generator.createEachFilesOnLayers": {
+			"type": "boolean",
+			"default": true,
+			"description": "Creates each files When a directory is created."
+		} */
+		const defaultPath = config.get<string>('defaultRootPath') ?? 'src/main/scala/'
+
+		let rootPath = targetUri.path
+		let targetPath = ''
+		if (!rootPath.concat('/').includes(defaultPath)) {
+			targetPath = defaultPath
+		}
 		// console.log(`domainName:${domainName}, root:${selectedUri.fsPath}`)
-		const rootFolder = await FileUtils.createDirectory(selectedUri, targetPath.concat(toSnakeCase(domainName)))
-		const rootPackageName = rootFolder.path.split(basicPath)[1].replaceAll('/', '.')
+		const rootFolder = await FileUtils.createDirectory(targetUri, targetPath.concat(toSnakeCase(domainName)))
+		const rootPackageName = rootFolder.path.split(defaultPath)[1].replaceAll('/', '.')
 		const domainNameAsPascalCase = toPascalCase(domainName)
 
-		const curriedMakeLayer = makeLayer(rootFolder, rootPackageName, domainNameAsPascalCase)
+		const curriedMakeLayer = makeLayer(rootFolder, rootPackageName, domainNameAsPascalCase, shouldCreateFile)
+		const controllerFile = await curriedMakeLayer(Layer.presentation, config.get<string>('layerPresentation') ?? '')
+		const serviceFile = await curriedMakeLayer(Layer.application, config.get<string>('layerApplication') ?? '')
+		const domainFile = await curriedMakeLayer(Layer.domain, config.get<string>('layerDomain') ?? '')
+		const repositoryFile = await curriedMakeLayer(Layer.infrastructure, config.get<string>('layerInfrastructure') ?? '')
 
-		const controllerFile = await curriedMakeLayer(Layer.presentation)
-		const serviceFile = await curriedMakeLayer(Layer.application)
-		const domainFile = await curriedMakeLayer(Layer.domain)
-		const repositoryFile = await curriedMakeLayer(Layer.infrastructure)
-
-		FileUtils.openFile([controllerFile, serviceFile, domainFile, repositoryFile])
+		if (shouldCreateFile) {
+			FileUtils.openFile([controllerFile, serviceFile, domainFile, repositoryFile])
+		}
 		vscode.window.showInformationMessage(`${domainNameAsPascalCase} Layer Created!`)
+	} else {
+		vscode.window.showErrorMessage(`Can not create files.Please check the workspace path`);
 	}
 }
 
@@ -68,7 +88,8 @@ export function activate(context: vscode.ExtensionContext) {
 	// Use the console to output diagnostic information (console.log) and errors (console.error)
 	// This line of code will only be executed once when your extension is activated
 	// console.log('Congratulations, your extension "ddd-basic-generator" is now active!');
-	const createDomainStructure = vscode.commands.registerCommand('ddd-file-generator.createDomainStructure', onCreateDomainStructure)
+	const createDDDStructure = vscode.commands.registerCommand('ddd-file-generator.createDDDStructure', onCreateDDDStructure(true))
+	const createDDDStructureWithoutFiles = vscode.commands.registerCommand('ddd-file-generator.createDDDStructureWithoutFiles', onCreateDDDStructure(false))
 
-	context.subscriptions.push(createDomainStructure);
+	context.subscriptions.push(createDDDStructure, createDDDStructureWithoutFiles);
 }

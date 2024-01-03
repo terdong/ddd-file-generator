@@ -7,8 +7,7 @@ I developed it to reduce the effort of repeating files and directories on Scala 
 ## Features
 
 * A total of 4 directories and 4 sample scala files will be created.
-![Create Domain Structure00](images/ddd_file_generator_example_01.gif)
-![Create Domain Structure01](images/ddd_file_generator_example_00.gif)
+![Create Domain Structure02](images/ddd_file_generator_example_02.gif)
 
 <!-- Describe specific features of your extension including screenshots of your extension in action. Image paths are relative to this README file.
 
@@ -20,13 +19,14 @@ For example if there is an image subfolder under your extension project workspac
 
 ## Commands
 
-| Command                                   | Title                   | Description                                                                                                                  |
-| ----------------------------------------- | ----------------------- | ---------------------------------------------------------------------------------------------------------------------------- |
-| ddd-file-generator.createDomainStructure | DDD:Create Domain Structure | A package for the entered domain name is created, and each of the four layer packages and sample files are created below it. |
+| Command                                           | Title                                  | Description                                                                                                                  |
+| ------------------------------------------------- | -------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------- |
+| ddd-file-generator.createDDDStructure             | DDD:Create DDD Structure               | A package for the entered domain name is created, and each of the four layer packages and sample files are created below it. |
+| ddd-file-generator.createDDDStructureWithoutFiles | DDD:Create DDD Structure Without Files | A package for the entered domain name is created, and each of the four layer packages are created below it.                  |
 
 ## Supported Languages
 
-* Scala
+* Scala3
 
 <!-- If you have any requirements or dependencies, add a section describing those and how to install and configure them. -->
 
@@ -39,7 +39,15 @@ For example:
 This extension contributes the following settings:
 
 * `myExtension.enable`: Enable/disable this extension.
-* `myExtension.thing`: Set to `blah` to do something. -->
+* `myExtension.thing`: Set to `blah` to do something.
+
+distribution command:
+
+1. vsce package
+2. vsce login ${publisher-id}
+3. vsce publish
+
+-->
 
 ## Known Issues
 
@@ -47,6 +55,12 @@ This extension contributes the following settings:
 * Other languages may be supported in the future.
 
 ## Release Notes(without hotfix)
+
+### 1.1.0
+
+- Fix command name
+- Add another command for it without files (ddd-file-generator.createDDDStructureWithoutFiles)
+- Add configuration. Now It can be specified the default root path and the directory name of each layer in setting
 
 ### 1.0.0
 

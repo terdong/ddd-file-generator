@@ -3,7 +3,7 @@
   "publisher": "DarrenKim",
   "displayName": "DDD File Generator",
   "description": "This extension creates files and folders according to typical DDD layer architecture.",
-  "version": "1.0.1",
+  "version": "1.1.0",
   "engines": {
     "vscode": "^1.85.0"
   },
@@ -21,19 +21,57 @@
     "menus": {
       "explorer/context": [
         {
-          "command": "ddd-file-generator.createDomainStructure",
-          "group": "2_workspace",
-          "when": "explorerResourceIsFolder"
+          "command": "ddd-file-generator.createDDDStructure",
+          "group": "2_workspace"
+        },
+        {
+          "command": "ddd-file-generator.createDDDStructureWithoutFiles",
+          "group": "2_workspace"
         }
       ]
     },
     "commands": [
       {
-        "command": "ddd-file-generator.createDomainStructure",
+        "command": "ddd-file-generator.createDDDStructure",
         "category": "DDD",
-        "title": "Create Domain Structure"
+        "title": "Create DDD Structure"
+      },
+      {
+        "command": "ddd-file-generator.createDDDStructureWithoutFiles",
+        "category": "DDD",
+        "title": "Create DDD Structure Without Files"
       }
-    ]
+    ],
+    "configuration": {
+      "title": "DDD File Generator",
+      "properties": {
+        "ddd-file-generator.defaultRootPath": {
+          "type": "string",
+          "default": "src/main/scala/",
+          "description": "Default path where directories and files will be created.(if the path is not selected on the EXPLORER)"
+        },
+        "ddd-file-generator.layerPresentation": {
+          "type": "string",
+          "default": "la1_presentation",
+          "description": "Directory name of the presentation layer to be created."
+        },
+        "ddd-file-generator.layerApplication": {
+          "type": "string",
+          "default": "la2_application",
+          "description": "Directory name of the application layer to be created."
+        },
+        "ddd-file-generator.layerDomain": {
+          "type": "string",
+          "default": "la3_domain",
+          "description": "Directory name of the domain layer to be created."
+        },
+        "ddd-file-generator.layerInfrastructure": {
+          "type": "string",
+          "default": "la4_infrastructure",
+          "description": "Directory name of the infrastructure layer to be created."
+        }
+      }
+    }
   },
   "scripts": {
     "vscode:prepublish": "npm run compile",
