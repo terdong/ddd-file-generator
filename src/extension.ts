@@ -5,6 +5,7 @@ import path from 'path';
 import * as vscode from 'vscode';
 import * as FileUtils from './file-utils';
 import { getCommonSnippet } from './snippets';
+import { getZioLayerSnippet } from './snippets/zio_layer.snippet';
 import { stringToUintArray, toPascalCase, toSnakeCase } from './utils/string-manipulation';
 
 enum Layer {
@@ -25,20 +26,25 @@ enum LayerFileSuffix {
 	infrastructure = "Repository"
 }
 
-const makeLayer = (rootDir: vscode.Uri, rootPackageName: string, domainName: string, shouldCreateFile: boolean) => async (layer: Layer, configedLayerName: string): Promise<vscode.Uri> => {
+const makeLayer = (rootDir: vscode.Uri, rootPackageName: string, domainName: string, shouldCreateFile: boolean, isZio: boolean) => async (layer: Layer, configedLayerName: string): Promise<vscode.Uri> => {
 	const layerIndex = layer.valueOf()
 	const layerName = configedLayerName.length > 0 ? configedLayerName : Object.values(LayerNames)[layerIndex]
 	const layerSuffix = Object.values(LayerFileSuffix)[layerIndex]
 	const layerDir = await FileUtils.createDirectory(rootDir, layerName)
 	if (shouldCreateFile) {
 		const fileName = `${domainName}${layerSuffix}`
-		return await FileUtils.createFileWithContent(layerDir, `${fileName}.scala`, stringToUintArray(getCommonSnippet(`${rootPackageName}.${layerName}`, fileName)))
+		if (isZio && layerSuffix.length > 0) {
+			return await FileUtils.createFileWithContent(layerDir, `${fileName}.scala`, stringToUintArray(getZioLayerSnippet(`${rootPackageName}.${layerName}`, fileName)))
+		} else {
+			return await FileUtils.createFileWithContent(layerDir, `${fileName}.scala`, stringToUintArray(getCommonSnippet(`${rootPackageName}.${layerName}`, fileName)))
+		}
+
 	} else {
 		return layerDir
 	}
 }
 
-const onCreateDDDStructure = (shouldCreateFile: boolean) => async (uri: vscode.Uri) => {
+const onCreateDDDStructure = (shouldCreateFile: boolean, isZio: boolean = false) => async (uri: vscode.Uri) => {
 	const domainName = await vscode.window.showInputBox({ title: "Domain Name", prompt: "As you enter a domain name, files and directories are created accrding to a simple DDD layer rule", placeHolder: "Enter a domain name" })
 	const selectedUri = uri ? uri : vscode.window.activeTextEditor != null ? vscode.window.activeTextEditor.document.uri : vscode.workspace.workspaceFolders?.[0].uri
 
@@ -66,7 +72,7 @@ const onCreateDDDStructure = (shouldCreateFile: boolean) => async (uri: vscode.U
 		const rootPackageName = rootFolder.path.split(defaultPath)[1].replaceAll('/', '.')
 		const domainNameAsPascalCase = toPascalCase(domainName)
 
-		const curriedMakeLayer = makeLayer(rootFolder, rootPackageName, domainNameAsPascalCase, shouldCreateFile)
+		const curriedMakeLayer = makeLayer(rootFolder, rootPackageName, domainNameAsPascalCase, shouldCreateFile, isZio)
 		const controllerFile = await curriedMakeLayer(Layer.presentation, config.get<string>('layerPresentation') ?? '')
 		const serviceFile = await curriedMakeLayer(Layer.application, config.get<string>('layerApplication') ?? '')
 		const domainFile = await curriedMakeLayer(Layer.domain, config.get<string>('layerDomain') ?? '')
@@ -90,6 +96,7 @@ export function activate(context: vscode.ExtensionContext) {
 	// console.log('Congratulations, your extension "ddd-basic-generator" is now active!');
 	const createDDDStructure = vscode.commands.registerCommand('ddd-file-generator.createDDDStructure', onCreateDDDStructure(true))
 	const createDDDStructureWithoutFiles = vscode.commands.registerCommand('ddd-file-generator.createDDDStructureWithoutFiles', onCreateDDDStructure(false))
+	const createDDDStructureWithZio = vscode.commands.registerCommand('ddd-file-generator.createDDDStructureWithZio', onCreateDDDStructure(true, true))
 
-	context.subscriptions.push(createDDDStructure, createDDDStructureWithoutFiles);
+	context.subscriptions.push(createDDDStructure, createDDDStructureWithoutFiles, createDDDStructureWithZio);
 }

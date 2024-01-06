@@ -3,7 +3,7 @@
   "publisher": "DarrenKim",
   "displayName": "DDD File Generator",
   "description": "This extension creates files and folders according to typical DDD layer architecture.",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "engines": {
     "vscode": "^1.85.0"
   },
@@ -27,6 +27,10 @@
         {
           "command": "ddd-file-generator.createDDDStructureWithoutFiles",
           "group": "2_workspace"
+        },
+        {
+          "command": "ddd-file-generator.createDDDStructureWithZio",
+          "group": "2_workspace"
         }
       ]
     },
@@ -40,6 +44,11 @@
         "command": "ddd-file-generator.createDDDStructureWithoutFiles",
         "category": "DDD",
         "title": "Create DDD Structure Without Files"
+      },
+      {
+        "command": "ddd-file-generator.createDDDStructureWithZio",
+        "category": "DDD",
+        "title": "Create DDD Structure With ZIO Layer"
       }
     ],
     "configuration": {

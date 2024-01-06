@@ -2,6 +2,10 @@
 
 All notable changes to the "DDD File Generator" extension will be documented in this file.
 
+## [1.2.0] (2024-01-07)
+
+- Add new command for ZIO layer (ddd-file-generator.createDDDStructureWithZio)
+
 ## [1.1.0] (2024-01-04)
 
 - Fix command name

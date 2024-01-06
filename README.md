@@ -23,6 +23,7 @@ For example if there is an image subfolder under your extension project workspac
 | ------------------------------------------------- | -------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------- |
 | ddd-file-generator.createDDDStructure             | DDD:Create DDD Structure               | A package for the entered domain name is created, and each of the four layer packages and sample files are created below it. |
 | ddd-file-generator.createDDDStructureWithoutFiles | DDD:Create DDD Structure Without Files | A package for the entered domain name is created, and each of the four layer packages are created below it.                  |
+| ddd-file-generator.createDDDStructureWithZio | DDD:Create DDD Structure With Zio | The file structure created by Create DDD Structure is the same, but additional code for the zio layer is generated in files excluding the domain layer. If you are not using the ZIO library, you do not need to use this command.                  |
 
 ## Supported Languages
 
@@ -55,6 +56,10 @@ distribution command:
 * Other languages may be supported in the future.
 
 ## Release Notes(without hotfix)
+
+### 1.2.0
+
+- Add new command for ZIO layer (ddd-file-generator.createDDDStructureWithZio)
 
 ### 1.1.0
 
